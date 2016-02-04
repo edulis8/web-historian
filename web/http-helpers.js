@@ -18,6 +18,20 @@ exports.serveAssets = function(res, asset, callback) {
   // (Static files are things like html (yours or archived from others...),
   // css, or anything that doesn't change often.)
 
+ /////////// Router ////////////
+  var parts2 = asset.split('.');
+  var isDotCom = parts2[parts2.length - 1];
+
+    console.log(isDotCom)
+    console.log(archive.paths.archivedSites + asset);
+    console.log(archive.isUrlArchived())
+  if (isDotCom === 'com' && archive.isUrlArchived()) {
+    asset = archive.paths.archivedSites + asset;
+    // get contents of file and send back
+    console.log('!!! served archived page');
+    return;
+  }
+
   if (asset === '/') {
     asset = archive.paths.siteAssets + '/index.html';
   } else {
@@ -25,18 +39,22 @@ exports.serveAssets = function(res, asset, callback) {
   }
 
   var parts = asset.split('.');
-  var postfix = parts[parts.length - 1];
+
+  var cssOrHTML = (parts[parts.length - 1] === css || html) ? parts[parts.length - 1] : 'plain';
+
+    console.log('cssOrHTML',cssOrHTML);
+
+    console.log('asset', asset);
 
 
     fs.readFile(asset, function (error, content) {
-      console.log('content...' + content);
       if (error) {
         res.writeHead(500);
         console.log('error in serveAssets', error);
         res.end();
 
       } else {
-        res.writeHead(200, {'Content-Type' : 'text/' + postfix});
+        res.writeHead(200, {'Content-Type' : 'text/' + cssOrHTML});
         res.end(content, 'utf-8');
 
     }

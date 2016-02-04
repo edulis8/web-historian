@@ -37,6 +37,7 @@ exports.addUrlToList = function(){
 };
 
 exports.isUrlArchived = function(){
+  return true;
 };
 // Use the library called HTTP-request?
 exports.downloadUrls = function(){
