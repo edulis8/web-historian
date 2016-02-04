@@ -74,17 +74,28 @@ exports.isUrlArchived = function(path, callback) {
 };
 // Use the library called HTTP-request?
 exports.downloadUrls = function(){
-  //exports.readListOfUrls(function(urls){
-    // for each url in urls, download the url
-    // for each url in urls, htmlfetcher(url);
-  //});
+
+
+  exports.readListOfUrls(function(urls){
+    urls.forEach(function(url){
+
+      exports.getUrl(url, exports.paths.archivedSites);
+    });
+  });
+
+};
+
+//exports.downloadUrls();
+
+exports.getUrl = function(url, destination){
+  console.log("$$$",destination+"/"+url)
   httpR.get({
-    url: 'http://wikipedia.com',
+    url: url,
     progress: function (current, total) {
       console.log('downloaded %d bytes from %d', current, total);
       }
-    }, 
-  exports.paths.archivedSites+'/wikipedia.com', function(error, result) {
+    },
+  destination+"/"+url, function(error, result) {
     if (error) {
       console.log('ERROR!', exports.paths.archivedSites);
       console.log('result', result)
@@ -92,7 +103,6 @@ exports.downloadUrls = function(){
   }
     console.log(result.code, result.headers, result.file);
 });
+}
 
-};
-
-exports.downloadUrls();
+//exports.downloadUrls();

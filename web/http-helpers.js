@@ -41,6 +41,12 @@ exports.serveAssets = function(res, req, callback) {
 
   pathParts = asset.split('.');
   contentType = pathParts[pathParts.length -1];
+
+  if(contentType === 'com'){
+    contentType = 'html';
+  }
+
+
 console.log('ASSETTTTTT' + asset);
   fs.readFile(asset, function (error, content) {
     if (error) {
