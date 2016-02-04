@@ -38,9 +38,9 @@ exports.serveAssets = function(res, asset, callback) {
 
   var parts = asset.split('.');
 
-  console.log('boolean',(parts[parts.length - 1] === 'css' || 'html') );
+  console.log('boolean',(parts[parts.length - 1] === ('css' || 'html') ));
 
-  var cssOrHTML = (parts[parts.length - 1] === 'css' || 'html') ? parts[parts.length - 1] : 'plain';
+  var cssOrHTML = (parts[parts.length - 1] === ('css' || 'html')) ? parts[parts.length - 1] : 'plain';
 
     console.log('cssOrHTML',cssOrHTML);
 
