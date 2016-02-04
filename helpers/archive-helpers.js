@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
-
+var http = require('http')
 var httpR = require('http-request');
 
 /*
@@ -79,12 +79,12 @@ exports.downloadUrls = function(){
     // for each url in urls, htmlfetcher(url);
   //});
   httpR.get({
-    url: 'http://edulisgardens.com/index.html',
+    url: 'http://wikipedia.com',
     progress: function (current, total) {
       console.log('downloaded %d bytes from %d', current, total);
       }
     }, 
-  exports.paths.archivedSites, function(error, result) {
+  exports.paths.archivedSites+'/wikipedia.com', function(error, result) {
     if (error) {
       console.log('ERROR!', exports.paths.archivedSites);
       console.log('result', result)
