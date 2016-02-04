@@ -1,0 +1,19 @@
+{
+  "name": "web-historian",
+  "description": "",
+  "main": "web/basic-server.js",
+  "license": "Copyright 2014, Hack Reactor. All rights reserved.",
+  "homepage": "https://github.com/edulis8/2016-01-web-historian",
+  "moduleType": [],
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.0"
+  }
+}
