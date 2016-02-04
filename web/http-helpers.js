@@ -29,10 +29,8 @@ exports.serveAssets = function(res, asset, callback) {
     asset = archive.paths.archivedSites + asset;
     // get contents of file and send back
     console.log('!!! served archived page');
-    return;
-  }
-
-  if (asset === '/') {
+    //return;
+  } else if (asset === '/') {
     asset = archive.paths.siteAssets + '/index.html';
   } else {
     asset = archive.paths.siteAssets + asset;
@@ -40,7 +38,9 @@ exports.serveAssets = function(res, asset, callback) {
 
   var parts = asset.split('.');
 
-  var cssOrHTML = (parts[parts.length - 1] === css || html) ? parts[parts.length - 1] : 'plain';
+  console.log('boolean',(parts[parts.length - 1] === 'css' || 'html') );
+
+  var cssOrHTML = (parts[parts.length - 1] === 'css' || 'html') ? parts[parts.length - 1] : 'plain';
 
     console.log('cssOrHTML',cssOrHTML);
 
