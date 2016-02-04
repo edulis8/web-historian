@@ -21,6 +21,7 @@ var server = http.createServer(handler.handleRequest);
 
 // var server = http.createServer(function(request, response) {
 //   console.log('server');
+
 //   var parts = urlParser.parse(request.url);
 //   // './'
 //   console.log("parts.pathname",parts.pathname);

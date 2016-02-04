@@ -8,8 +8,8 @@ var fs = require('fs'); //??
 
 
 var actions = {
-  GET: helpers.serveAssets
-  // POST:
+  GET: helpers.serveAssets,
+  POST: helpers.addAssets
 };
 
 exports.handleRequest = function (req, res) {
@@ -17,7 +17,8 @@ exports.handleRequest = function (req, res) {
 
     var action = actions[req.method];
 
-    action(res, req.url, function() {});
+    action(res, req, function() {});
+
   }
 
   //res.end(archive.paths.list);
