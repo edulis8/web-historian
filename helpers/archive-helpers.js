@@ -1,6 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
+var http = require("http");
 
 var httpR = require('http-request');
 
@@ -74,24 +75,29 @@ exports.isUrlArchived = function(path, callback) {
 };
 // Use the library called HTTP-request?
 exports.downloadUrls = function(){
-  //exports.readListOfUrls(function(urls){
-    // for each url in urls, download the url
-    // for each url in urls, htmlfetcher(url);
-  //});
-  httpR.get({
-    url: 'http://edulisgardens.com/index.html',
-    progress: function (current, total) {
-      console.log('downloaded %d bytes from %d', current, total);
-      }
-    }, 
-  exports.paths.archivedSites, function(error, result) {
-    if (error) {
-      console.log('ERROR!', exports.paths.archivedSites);
-      console.log('result', result)
-    return;
-  }
-    console.log(result.code, result.headers, result.file);
-});
+  console.log('dlurls')
+  var download = function(url, dest, cb) {
+  console.log('dl')
+  var file = fs.createWriteStream(dest);
+  console.log('dest', dest);
+  console.log('url', url)
+  var request = http.get(url, function(response) {
+    console.log('HIIIIII?')
+    response.pipe(file);
+    file.on('finish', function() {
+      file.close(cb);
+    });
+  }).on('error', function(err) { // Handle errors
+    fs.unlink(dest); // Delete the file async. (But we don't check the result)
+    if (cb) cb(err.message);
+  });
+};
+
+download('http://www.google.com', this.paths.archivedSites, function(p){
+  console.log(p)
+  console.log('cb invoked')
+})
+
 
 };
 
