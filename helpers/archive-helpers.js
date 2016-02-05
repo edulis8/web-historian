@@ -36,7 +36,8 @@ exports.readListOfUrls = function(callback){
     }
     // this takes list of urls and splits them into an array
     callback(data.split('\n'));
-  });
+  }
+  );
 };
 
 exports.isUrlInList = function(target, callback) {
@@ -48,19 +49,31 @@ exports.isUrlInList = function(target, callback) {
 };
 // isUrlInList(targetURL, function(urls){ return urls.contains(target) })
 
+
+// fs.appendFile('message.txt', 'data to append', function (err) {
+
+// });
+
 // fs.writeFile(file, data, callback)
 exports.addUrlToList = function(url, callback){
   // get all data, append thing, put it back
   exports.readListOfUrls(function(urls){
     urls.pop();
     urls.push(url);
-    fs.writeFile(exports.paths.list, urls.join('\n'));
+    console.log(url + '*****' + urls);
+
+    fs.appendFile(exports.paths.list, url+'\n', function (err) {
+      console.log('appendFile!');
+    });
+
+
+    //fs.writeFile(exports.paths.list, urls.join('\n'));
     callback();
   });
 };
 
 exports.isUrlArchived = function(path, callback) {
-  console.log('----' + path);
+  console.log('isUrlArchived----' + path);
 
   fs.exists(exports.paths.archivedSites + '/' + path, function(exists) {
     if(callback){
@@ -68,9 +81,9 @@ exports.isUrlArchived = function(path, callback) {
     }
   });
  /// still need? ////
-  if (path.split('.')[0] === 'www') {
-  return true;
-}
+  // if (path.split('.')[0] === 'www') {
+  // return true;
+//}
 
 };
 // Use the library called HTTP-request?
@@ -92,14 +105,14 @@ exports.downloadUrls = function(param){
 
 };
 
-//exports.downloadUrls();
 
 exports.getUrl = function(url, destination){
   console.log("$$$",destination+"/"+url)
+
   httpR.get({
     url: url,
     progress: function (current, total) {
-      console.log('downloaded %d bytes from %d', current, total);
+      //console.log('downloaded %d bytes from %d', current, total);
       }
     },
   destination+"/"+url, function(error, result) {
@@ -112,4 +125,6 @@ exports.getUrl = function(url, destination){
 });
 }
 
+//setInterval(exports.downloadUrls, 100);
+//exports.downloadUrls();
 exports.getUrl('www.google.com',exports.paths.archivedSites );

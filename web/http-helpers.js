@@ -17,8 +17,8 @@ exports.serveAssets = function(res, req, specificAsset) {
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...),
   // css, or anything that doesn't change often.)
-
   asset = specificAsset || req.url;
+  console.log('TOP of serveAssets', asset)
  /////////// Router ////////////
   var pathParts = asset.split('.');
   var pathEnding = pathParts[pathParts.length - 1];
@@ -30,8 +30,8 @@ exports.serveAssets = function(res, req, specificAsset) {
     asset = archive.paths.siteAssets + asset;
 
 
-  } else if (archive.isUrlArchived(asset.slice(1))) {
-    asset = archive.paths.archivedSites + asset;
+  } else if (asset.split('.')[0] === 'www' || asset.split('.')[0] === '/www' ) {
+    asset = archive.paths.archivedSites +'/'+ asset;
     console.log('>>>>>' + asset);
 
   } else {
@@ -46,6 +46,7 @@ exports.serveAssets = function(res, req, specificAsset) {
     contentType = 'html';
   }
 
+  console.log('contentType', contentType);
 
 console.log('ASSETTTTTT' + asset);
   fs.readFile(asset, function (error, content) {
@@ -55,11 +56,26 @@ console.log('ASSETTTTTT' + asset);
       res.end();
     } else {
       res.writeHead(200, { 'Content-Type': 'text/' + contentType });
+      res.write('<hi>TEST!</h1>')
       res.end(content, 'utf-8');
     }
   });
 
 };
+
+exports.getPostedUrl = function(req, cb) {
+  var body = '';
+  req.on('data', function(chunk){
+    body += chunk;
+  });
+  req.on('end', function(){
+
+    console.log('###body##', body);
+
+    cb(JSON.parse(body)+".html");
+  });
+};
+
 
 exports.addAssets = function(res, req) {
   var body = '';
@@ -69,7 +85,6 @@ exports.addAssets = function(res, req) {
   req.on('end', function(){
     archive.addUrlToList(JSON.parse(body));
   });
-
 };
 
 // As you progress, keep thinking about what helper functions you can put here!

@@ -2,6 +2,7 @@
 <html>
 <head>
   <link rel="stylesheet" type="text/css" href="styles.css" />
+
 </head>
 
 <body>
@@ -10,10 +11,45 @@
   <form method="POST">
     <input type="input" name="url">
   </form>
-<!-- 
-  <script src="../../bower_components/jquery/dist/jquery.min.js"></script>
 
- -->
+  <script src="https://code.jquery.com/jquery-2.2.0.min.js"></script>
+  <script>
+
+$(document).ready(function() {
+    
+  
+
+  $('form').submit(function(event) {
+    var messageContent = $('input').val();
+    $('input').val('');
+    processSubmitForm(messageContent);
+    event.preventDefault();
+  });
+
+  var processSubmitForm = function(messageContent){
+
+    $.ajax({
+      url: 'http://127.0.0.1:8080/',
+      type: 'POST',
+      dataType: 'application/json',
+      data: JSON.stringify(messageContent)
+    })
+    .success(function() {
+      console.log("success");
+    })
+    .error(function() {
+      console.log("error");
+    });
+  
+
+};
+
+
+});  
+
+
+  </script>
+
 
  </body>
 </html>

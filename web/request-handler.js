@@ -20,31 +20,38 @@ var fs = require('fs'); //??
 var actions = {
   GET: helpers.serveAssets,
   POST: function(res, req){
+   console.log('xxxx' , req.method, 'url', req.url);
     // get url via helper.getPostedURl
-    var url = helpers.getPostedUrl(req, function(){
+    helpers.getPostedUrl(req, function(url){
       // how to set this to a variable in this scope
-      url = body;
+
+      archive.isUrlInList(url, function(found){
+        //if its in sites.txt -- if found
+        if(found){
+          archive.isUrlArchived(url, function(exists){
+            if(exists) {
+              //check if in sites folder -- isUrlArchived
+              //if it is, display page -- send to serveAssets.
+              console.log('SSSSSSEEEERVE PPPAAAAGGEE');
+              helpers.serveAssets(res, req, url);
+            } else {
+              //if not, display loading page
+              
+            }
+          });
+        } else {
+        console.log('trying to serve landing.html')
+        helpers.serveAssets(res, req, '/loading.html');
+      // if not
+      //append to sites.txt -- addUrlToList
+        console.log('url before sent to addUrl', url);
+        archive.addUrlToList(url, function(){});
+      }
     });
 
-    archive.isUrlInList(url, function(found){
-      //if its in sites.txt -- if found
-      if(found){
-        isUrlArchived(path, function(exists){
-          if(exists) {
-            //check if in sites folder -- isUrlArchived
-            //if it is, display page -- send to serveAssets.
-            helpers.serveAssets(res, req);
-          } else {
-            //if not, display loading page
-            helper.serveAssets(res, req, '/loading.html');
-          }
-        });
-      } else {
-    // if not
-    //append to sites.txt -- addUrlToList
-      addUrlToList(url, function(){});
-    }
-  });
+    });
+
+
  }
 };
 
