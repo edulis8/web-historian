@@ -1,6 +1,7 @@
 var path = require('path');
 var archive = require('../helpers/archive-helpers');
 var helpers = require('./http-helpers.js');
+var urlParser = require('url');
 
 // require more modules/folders here!
 var fs = require('fs'); //??
@@ -18,49 +19,76 @@ var fs = require('fs'); //??
 
 
 var actions = {
-  GET: helpers.serveAssets,
-  POST: function(res, req){
-   console.log('xxxx' , req.method, 'url', req.url);
-    // get url via helper.getPostedURl
-    helpers.getPostedUrl(req, function(url){
-      // how to set this to a variable in this scope
-
-      archive.isUrlInList(url, function(found){
-        //if its in sites.txt -- if found
+  GET: function(res, req){
+    // parses url to various parts
+    var parts = urlParser.parse(request.url);
+    // actual url = parts.pathname
+    // turn / into index.html
+    var urlPath = parts.pathname === '/' ? '/index.html' : parts.pathname;
+    helpers.serveAssets(res, urlPath, function(){
+      // is it in sites.txt?
+        // if yes -> loading
+        // if no -> 404
+      archive.isUrlInList(urlPath.slice(1), function(found){
         if(found){
+          helpers.sendRedirect(res, '/loading.html');
+        } else {
+          helpers.send404(res);
+        }
+      });
+    });
+
+    //look inside public and archive/sites
+    // if exists, serve it
+    // prioritize loading from public
+    // if not found, look in archive
+  },
+  POST: function(res, req){
+
+    helpers.getPostedUrl(req, function(url){
+      // if AJAX not used, url here will be url=www.google.com
+      // do:
+      // var url = url.split('=')[1];
+
+      // in sites.txt?
+      archive.isUrlInList(url, function(found){
+        // if yes?
+        if(found){
+          // is it archived?
           archive.isUrlArchived(url, function(exists){
+            // if yes
             if(exists) {
-              //check if in sites folder -- isUrlArchived
-              //if it is, display page -- send to serveAssets.
-              console.log('SSSSSSEEEERVE PPPAAAAGGEE');
-              helpers.serveAssets(res, req, url);
-            } else {
-              //if not, display loading page
-              
+              // display page
+              helpers.sendRedirect(res, '/'+url);
+            } else {  
+              // if no
+                // redirect loading 
+                // helpers.serveAssets(res, '/loading.html') NOT IDEAL, causes 'form resubmission alert box'
+                // *Will send me to the loading page instead of responding with the loading page:*
+                helpers.sendRedirect(res, '/loading.html');
             }
           });
         } else {
-        console.log('trying to serve landing.html')
-        helpers.serveAssets(res, req, '/loading.html');
-      // if not
-      //append to sites.txt -- addUrlToList
-        console.log('url before sent to addUrl', url);
-        archive.addUrlToList(url, function(){});
-      }
-    });
+        // if no
+          //append to sites.txt
+        archive.addUrlToList(url, function(){
+          // display loading page (redirect)
+          helpers.sendRedirect(res, '/loading.html');
 
-    });
+        });
 
-
- }
-};
+      } }); }); }};
 
 exports.handleRequest = function (req, res) {
   if (req.method) {
 
     var action = actions[req.method];
 
-    action(res, req);
+    if(action){
+      action(res, req);
+    } else {
+      // util.sendResponse(response, "Not Found", 404)
+    }
 
   }
 

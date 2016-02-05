@@ -35,7 +35,10 @@ exports.readListOfUrls = function(callback){
       throw error;
     }
     // this takes list of urls and splits them into an array
-    callback(data.split('\n'));
+    if(callback){
+      // toString why? from solution vid.
+      callback(data.toString().split('\n'));
+    }
   }
   );
 };
@@ -43,6 +46,7 @@ exports.readListOfUrls = function(callback){
 exports.isUrlInList = function(target, callback) {
   exports.readListOfUrls(function(urls) {
     var found = urls.some(function(url){ return url === target });
+    
     callback(found);
   });
 

@@ -11,53 +11,39 @@ exports.headers = headers = {
   'Content-Type': "text/html"
 };
 
-//archive.paths.siteAssets = path.join(__dirname, '../web/public'),
-
-exports.serveAssets = function(res, req, specificAsset) {
-  // Write some code here that helps serve up your static files!
-  // (Static files are things like html (yours or archived from others...),
-  // css, or anything that doesn't change often.)
-  asset = specificAsset || req.url;
-  console.log('TOP of serveAssets', asset)
- /////////// Router ////////////
-  var pathParts = asset.split('.');
-  var pathEnding = pathParts[pathParts.length - 1];
-
-  if (asset === '/') {
-    asset = archive.paths.siteAssets + '/index.html';
-
-  } else if (pathEnding === 'css' || pathEnding === 'js' || pathEnding === 'html') {
-    asset = archive.paths.siteAssets + asset;
+exports.sendResponse = function(response, obj, status){
+  status = status || 404;
+  response.writeHead(status, headers);
+  response.end(obj);
+};
+exports.send404 = function(response){
+  exports.sendResponse(response, '404: Page not found', 404);
+};
+exports.sendRedirect = function(response, location, status){
+  status = status || 302;
+  response.writeHead(status, {Location: location});
+  response.end();
+};
 
 
-  } else if (asset.split('.')[0] === 'www' || asset.split('.')[0] === '/www' ) {
-    asset = archive.paths.archivedSites +'/'+ asset;
-    console.log('>>>>>' + asset);
-
-  } else {
-    res.writeHead(404);
-    res.end();
-  }
-
-  pathParts = asset.split('.');
-  contentType = pathParts[pathParts.length -1];
-
-  if(contentType === 'com'){
-    contentType = 'html';
-  }
-
-  console.log('contentType', contentType);
-
-console.log('ASSETTTTTT' + asset);
-  fs.readFile(asset, function (error, content) {
-    if (error) {
-      res.writeHead(500);
-      console.log('error in serveAssets', error);
-      res.end();
+exports.serveAssets = function(res, asset, callback) {
+  var encoding = {encoding: 'utf8'};
+  // 1. check in public folder?
+  fs.readFile(archive.paths.siteAssets + asset, encoding, function(err, content){
+    if(err){
+      // 2. file doesn't exist in public, check in archive folder
+      fs.readFile(archive.paths.archivedSites + asset, encoding, function(err, content){
+        if(err){
+          // 3. file doesn't exist in either location
+          callback ? callback() : exports.send404(res);
+        } else {
+          // file exists in archive, serve it
+          exports.sendResponse(res, content);
+        }
+      });
     } else {
-      res.writeHead(200, { 'Content-Type': 'text/' + contentType });
-      res.write('<hi>TEST!</h1>')
-      res.end(content, 'utf-8');
+      // file exists in public, serve it
+      exports.sendResponse(res, content);
     }
   });
 
@@ -71,8 +57,8 @@ exports.getPostedUrl = function(req, cb) {
   req.on('end', function(){
 
     console.log('###body##', body);
-
-    cb(JSON.parse(body)+".html");
+    // not JSON parsing, via solution vid
+    cb(body);
   });
 };
 
