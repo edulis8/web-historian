@@ -21,7 +21,7 @@ var fs = require('fs'); //??
 var actions = {
   GET: function(res, req){
     // parses url to various parts
-    var parts = urlParser.parse(request.url);
+    var parts = urlParser.parse(req.url);
     // actual url = parts.pathname
     // turn / into index.html
     var urlPath = parts.pathname === '/' ? '/index.html' : parts.pathname;
@@ -65,6 +65,7 @@ var actions = {
                 // redirect loading 
                 // helpers.serveAssets(res, '/loading.html') NOT IDEAL, causes 'form resubmission alert box'
                 // *Will send me to the loading page instead of responding with the loading page:*
+                console.log('redirect to loading')
                 helpers.sendRedirect(res, '/loading.html');
             }
           });
@@ -73,6 +74,7 @@ var actions = {
           //append to sites.txt
         archive.addUrlToList(url, function(){
           // display loading page (redirect)
+          console.log('send to loading 2nd else')
           helpers.sendRedirect(res, '/loading.html');
 
         });

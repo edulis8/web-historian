@@ -20,6 +20,7 @@ exports.send404 = function(response){
   exports.sendResponse(response, '404: Page not found', 404);
 };
 exports.sendRedirect = function(response, location, status){
+  console.log('in sendRedirect', location);
   status = status || 302;
   response.writeHead(status, {Location: location});
   response.end();
