@@ -13,12 +13,12 @@ exports.headers = headers = {
 
 //archive.paths.siteAssets = path.join(__dirname, '../web/public'),
 
-exports.serveAssets = function(res, req, callback) {
+exports.serveAssets = function(res, req, specificAsset) {
   // Write some code here that helps serve up your static files!
   // (Static files are things like html (yours or archived from others...),
   // css, or anything that doesn't change often.)
 
-  asset = req.url;
+  asset = specificAsset || req.url;
  /////////// Router ////////////
   var pathParts = asset.split('.');
   var pathEnding = pathParts[pathParts.length - 1];
@@ -26,7 +26,7 @@ exports.serveAssets = function(res, req, callback) {
   if (asset === '/') {
     asset = archive.paths.siteAssets + '/index.html';
 
-  } else if (pathEnding === 'css' || pathEnding === 'js') {
+  } else if (pathEnding === 'css' || pathEnding === 'js' || pathEnding === 'html') {
     asset = archive.paths.siteAssets + asset;
 
 
@@ -61,7 +61,7 @@ console.log('ASSETTTTTT' + asset);
 
 };
 
-exports.addAssets = function(res, req){
+exports.addAssets = function(res, req) {
   var body = '';
   req.on('data', function(chunk){
     body += chunk;

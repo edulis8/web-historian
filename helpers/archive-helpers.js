@@ -41,7 +41,8 @@ exports.readListOfUrls = function(callback){
 
 exports.isUrlInList = function(target, callback) {
   exports.readListOfUrls(function(urls) {
-    callback(urls);
+    var found = urls.some(function(url){ return url === target });
+    callback(found);
   });
 
 };
@@ -63,25 +64,31 @@ exports.isUrlArchived = function(path, callback) {
 
   fs.exists(exports.paths.archivedSites + '/' + path, function(exists) {
     if(callback){
-      return callback(exists);
+      callback(exists);
     }
   });
-
+ /// still need? ////
   if (path.split('.')[0] === 'www') {
   return true;
 }
 
 };
 // Use the library called HTTP-request?
-exports.downloadUrls = function(){
+exports.downloadUrls = function(param){
 
-
-  exports.readListOfUrls(function(urls){
-    urls.forEach(function(url){
-
+  if(param && param.length){
+    param.forEach(function(url){
+      console.log('URL!', url);
       exports.getUrl(url, exports.paths.archivedSites);
     });
-  });
+  } else {
+    exports.readListOfUrls(function(urls){
+      urls.forEach(function(url){
+
+        exports.getUrl(url, exports.paths.archivedSites);
+      });
+    });
+  }
 
 };
 
@@ -105,4 +112,4 @@ exports.getUrl = function(url, destination){
 });
 }
 
-//exports.downloadUrls();
+exports.getUrl('www.google.com',exports.paths.archivedSites );
