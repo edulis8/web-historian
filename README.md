@@ -1,6 +1,6 @@
 # Web-historian
 =========
-> This sprint was part of my courseowork at Hack Reactor Remote.
+> This sprint was part of my coursework at Hack Reactor Remote.
 
 The sprint involved restling with and becoming more comfortable with Node.js development callback patterns, especially when chaining asynchronous functions
 
